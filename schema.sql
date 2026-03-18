@@ -8,6 +8,7 @@ USE routinery;
 -- 회원
 CREATE TABLE users (
     userId BIGINT NOT NULL AUTO_INCREMENT COMMENT '회원ID',
+    name VARCHAR(50) NOT NULL COMMENT '이름',
     email VARCHAR(50) NOT NULL COMMENT '이메일',
     birthYear SMALLINT NULL COMMENT '나이',
     gender VARCHAR(6) NULL COMMENT '성별',
@@ -178,9 +179,11 @@ CREATE TABLE routine (
 
 -- 루틴 지표
 -- routine 테이블과 1:1 관계
+-- users 테이블과 1:N 관계
 CREATE TABLE routine_metric (
     routineMetricsId BIGINT NOT NULL AUTO_INCREMENT COMMENT '루틴지표ID',
     routineId BIGINT NOT NULL COMMENT '루틴ID',
+    userId BIGINT NOT NULL COMMENT '회원ID',
     currentStreak INT NOT NULL COMMENT '현재 연속 수행일',
     maxStreak INT NOT NULL COMMENT '최대 연속 수행일',
     totalCount INT NOT NULL COMMENT '총 수행 횟수',
@@ -189,6 +192,7 @@ CREATE TABLE routine_metric (
     lastRoutineStartTime DATETIME NULL COMMENT '마지막 루틴 시작 타임스탬프',
     lastRoutineEndTime DATETIME NULL COMMENT '마지막 루틴 종료 타임스탬프',
     PRIMARY KEY (routineMetricsId),
+    CONSTRAINT fk_routine_metric_users FOREIGN KEY (userId) REFERENCES uesrs (userId),
     CONSTRAINT fk_routine_metric_routine FOREIGN KEY (routineId) REFERENCES routine (routineId)
 );
 
@@ -285,7 +289,9 @@ CREATE TABLE log (
     isStreakSaver BOOLEAN NOT NULL COMMENT '복구권으로 완료 처리 여부',
     mood TINYINT NULL COMMENT '기분 점수 1~5',
     impression VARCHAR(500) NULL COMMENT '한 줄 소감',
-    PRIMARY KEY (logId)
+    savedTime DATETIME NOT NULL COMMENT '저장일시',
+    PRIMARY KEY (logId),
+    CONSTRAINT fk_log_routine FOREIGN KEY (routineId) REFERENCES routine (routineId)
 );
 
 -- 기록 당시의 Habit 목록 스냅샷 (Habit[])
@@ -315,6 +321,7 @@ CREATE TABLE log_habit_snapshot (
 CREATE TABLE log_habit_check (
     logHabitCheckId BIGINT NOT NULL AUTO_INCREMENT COMMENT '습관기록로그ID',
     logId BIGINT NOT NULL COMMENT '로그ID',
+    habitId BIGINT NOT NULL COMMENT '습관ID',
     actualDuration INT NULL COMMENT '실제 수행 시간',
     status VARCHAR(20) NULL COMMENT '상태',
     PRIMARY KEY (logHabitCheckId),
