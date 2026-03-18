@@ -168,11 +168,6 @@ CREATE TABLE routine (
     archive BOOLEAN NOT NULL COMMENT '보관 여부',
     lastUpdated DATETIME NOT NULL COMMENT '마지막 수정 시간',
     setTTS BOOLEAN NOT NULL COMMENT 'TTS 사용 여부',
-    notifyFriendsOnStart BOOLEAN NOT NULL COMMENT '친구에게 내 활동 알림 여부',
-    setAlarm BOOLEAN NOT NULL COMMENT '알림 설정 여부',
-    notifType VARCHAR(20) NOT NULL COMMENT '알림 타입',
-    alarmSoundId VARCHAR(20) NOT NULL COMMENT '알림 사운드 ID',
-    setAlarmMethod VARCHAR(30) NOT NULL COMMENT '알림 방식',
     PRIMARY KEY (routineId),
     CONSTRAINT fk_routine_user FOREIGN KEY (userId) REFERENCES users (userId)
 );
@@ -192,7 +187,7 @@ CREATE TABLE routine_metric (
     lastRoutineStartTime DATETIME NULL COMMENT '마지막 루틴 시작 타임스탬프',
     lastRoutineEndTime DATETIME NULL COMMENT '마지막 루틴 종료 타임스탬프',
     PRIMARY KEY (routineMetricsId),
-    CONSTRAINT fk_routine_metric_users FOREIGN KEY (userId) REFERENCES uesrs (userId),
+    CONSTRAINT fk_routine_metric_users FOREIGN KEY (userId) REFERENCES users (userId),
     CONSTRAINT fk_routine_metric_routine FOREIGN KEY (routineId) REFERENCES routine (routineId)
 );
 
@@ -252,6 +247,20 @@ CREATE TABLE routine_tag (
     UNIQUE KEY uk_routine_tag (routineId, tagId),
     CONSTRAINT fk_routine_tag_routine FOREIGN KEY (routineId) REFERENCES routine (routineId),
     CONSTRAINT fk_routine_tag_tag FOREIGN KEY (tagId) REFERENCES tag (tagId)
+);
+
+-- 루틴 알림
+-- routine 테이블과 1:1 관계
+CREATE TABLE routine_alarm (
+    routineAlarmId BIGINT NOT NULL AUTO_INCREMENT COMMENT '루틴알림ID',
+    routineId BIGINT NOT NULL COMMENT '루틴ID',
+    notifyFriendsOnStart BOOLEAN NOT NULL COMMENT '친구에게 내 활동 알림 여부',
+    setAlarm BOOLEAN NOT NULL COMMENT '알림 설정 여부',
+    notifType VARCHAR(20) NOT NULL COMMENT '알림 타입',
+    alarmSoundId VARCHAR(20) NOT NULL COMMENT '알림 사운드 ID',
+    setAlarmMethod VARCHAR(30) NOT NULL COMMENT '알림 방식',
+    PRIMARY KEY (routineAlarmId),
+    CONSTRAINT fk_alarm_routine FOREIGN KEY (routineId) REFERENCES routine (routineId)
 );
 
 -- 습관
