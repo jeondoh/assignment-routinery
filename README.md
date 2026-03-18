@@ -115,7 +115,7 @@ WHERE u.userId IN (
 
 ### 6. 설계 결정의 이유와 트레이드오프를 설명해주세요.
 - 아래 문서에 정리하였습니다.
-- [schema_reason.md]()
+- [schema_reason.md](https://github.com/jeondoh/assignment-routinery/blob/main/schema_reason.md)
 
 ## API 설계
 ### 루틴 목록 조회
